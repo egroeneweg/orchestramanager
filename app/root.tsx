@@ -30,7 +30,7 @@ function SidebarLayout({ children }: { children: React.ReactNode }) {
       <aside className="w-64 bg-gray-900 text-white flex flex-col items-center py-6">
         {/* Logo */}
         <div className="mb-8">
-          <img src="/logo.png" alt="Logo" className="h-12 w-12 rounded-full" />
+          <img src="/logo.svg" alt="Logo" className="h-12 w-12 rounded-full" />
         </div>
         {/* Navigation Links */}
       </aside>
