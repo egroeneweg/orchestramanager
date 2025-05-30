@@ -46,6 +46,10 @@ module.exports = {
         ],
         "import/resolver": {
           typescript: {},
+          alias: {
+            map: [["~", "./app"]],
+            extensions: [".ts", ".tsx", ".js", ".jsx"],
+          }
         },
       },
     },
@@ -82,3 +86,4 @@ module.exports = {
     },
   ],
 };
+
