@@ -1,6 +1,6 @@
+import { createCookieSessionStorage } from "@remix-run/node";
 import { Authenticator } from "remix-auth";
 import { FormStrategy } from "remix-auth-form";
-import { createCookieSessionStorage } from "@remix-run/node";
 
 import { query } from "~/services/pg.server";
 
@@ -9,6 +9,7 @@ type User = {
   email: string;
   firstName: string;
   lastName: string;
+  isAdmin?: boolean;
 };
 
 export const sessionStorage = createCookieSessionStorage({
@@ -29,7 +30,7 @@ export const authenticator = new Authenticator<User>();
 
 async function login(email: string, password: string): Promise<User | null> {
   const result = await query(
-    "SELECT id, email, first_name, last_name FROM users WHERE email = $1 AND password = crypt($2, password)",
+    "SELECT user_id, email, first_name, last_name, is_admin FROM users WHERE email = $1 AND password = crypt($2, password)",
     [email, password]
   );
 
@@ -39,10 +40,11 @@ async function login(email: string, password: string): Promise<User | null> {
 
   const row = result.rows[0];
   return {
-    id: row.id,
+    id: row.user_id,
     email: row.email,
     firstName: row.first_name,
     lastName: row.last_name,
+    isAdmin: row.is_admin || false,
   };
 }
 

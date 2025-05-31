@@ -27,4 +27,40 @@ export async function query<T extends QueryResultRow>(
   }
 }
 
+export async function ensureTables() {
+  const createTableQueries = [
+    `
+    CREATE TABLE IF NOT EXISTS users (
+      user_id SERIAL PRIMARY KEY,
+      username VARCHAR(255) UNIQUE NOT NULL,
+      first_name VARCHAR(100) NOT NULL,
+      last_name VARCHAR(100) NOT NULL,
+      email VARCHAR(255) UNIQUE NOT NULL,
+      password VARCHAR(255) NOT NULL,
+      created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+      is_admin BOOLEAN DEFAULT FALSE
+    );
+    `,
+    `
+    CREATE TABLE IF NOT EXISTS roles (
+      id SERIAL PRIMARY KEY,
+      name VARCHAR(100) UNIQUE NOT NULL
+    );
+    `,
+    `
+    CREATE TABLE IF NOT EXISTS user_roles (
+      user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+      role_id INTEGER REFERENCES roles(id) ON DELETE CASCADE,
+      PRIMARY KEY (user_id, role_id)
+    );
+    `
+  ];
+
+  for (const queryText of createTableQueries) {
+    await query(queryText);
+  }
+}
+
+ensureTables();
+
 export { pool };
