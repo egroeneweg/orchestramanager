@@ -42,18 +42,40 @@ export async function ensureTables() {
     );
     `,
     `
-    CREATE TABLE IF NOT EXISTS roles (
-      id SERIAL PRIMARY KEY,
-      name VARCHAR(100) UNIQUE NOT NULL
+    CREATE TABLE IF NOT EXISTS projects (
+      project_id SERIAL PRIMARY KEY,
+      project_name VARCHAR(255) NOT NULL
     );
     `,
     `
-    CREATE TABLE IF NOT EXISTS user_roles (
-      user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-      role_id INTEGER REFERENCES roles(id) ON DELETE CASCADE,
-      PRIMARY KEY (user_id, role_id)
+      CREATE TABLE IF NOT EXISTS project_participants (
+      participant_id SERIAL PRIMARY KEY,
+      project_id INTEGER NOT NULL REFERENCES projects(project_id) ON DELETE CASCADE,
+      user_id INTEGER NOT NULL REFERENCES users(user_id) ON DELETE CASCADE
     );
+    `,
     `
+      CREATE TABLE IF NOT EXISTS instruments (
+      instrument_id SERIAL PRIMARY KEY,
+      instrument_name VARCHAR(255) NOT NULL,
+      section VARCHAR(100) NOT NULL
+    );
+    `,
+    `
+      CREATE TABLE IF NOT EXISTS instrument_players (
+      player_id SERIAL PRIMARY KEY,
+      instrument_id INTEGER NOT NULL REFERENCES instruments(instrument_id) ON DELETE CASCADE,
+      user_id INTEGER NOT NULL REFERENCES users(user_id) ON DELETE CASCADE
+    );
+    `,
+    `
+      CREATE TABLE IF NOT EXISTS rehearsals (
+      rehearsal_id SERIAL PRIMARY KEY,
+      project_id INTEGER NOT NULL REFERENCES projects(project_id) ON DELETE CASCADE,
+      rehearsal_date TIMESTAMP WITH TIME ZONE NOT NULL,
+      location VARCHAR(255) NOT NULL,
+      notes TEXT
+    );`,
   ];
 
   for (const queryText of createTableQueries) {
